@@ -1,4 +1,4 @@
-﻿namespace TsService
+namespace TsService
 {
     partial class ProjectInstaller
     {
@@ -44,7 +44,7 @@
             // serviceInstaller1
             // 
             this.serviceInstaller1.DelayedAutoStart = true;
-            this.serviceInstaller1.DisplayName = "FingertechTs";
+            this.serviceInstaller1.DisplayName = "FingertechTS";
             this.serviceInstaller1.ServiceName = "TsService";
             this.serviceInstaller1.AfterInstall += new System.Configuration.Install.InstallEventHandler(this.ServiceInstaller1_AfterInstall);
             // 

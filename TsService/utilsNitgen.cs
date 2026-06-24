@@ -1,38 +1,75 @@
-﻿using NITGEN.SDK.NBioBSP;
+using NITGEN.SDK.NBioBSP;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace TsService
 {
     class utilsNitgen
     {
+        private readonly NBioAPI m_NBioAPI;
+        private readonly object _deviceLock = new object();
+        private readonly EventLog m_eventLog;
 
+        public utilsNitgen()
+        {
+            m_NBioAPI = new NBioAPI();
+            m_eventLog = new EventLog { Source = "service1" };
+        }
 
         public string Capturar()
         {
-            NBioAPI m_NBioAPI = new NBioAPI();
+            lock (_deviceLock)
+            {
+                try
+                {
+                    NBioAPI.Type.HFIR hCapturedFIR = new NBioAPI.Type.HFIR();
+                    NBioAPI.Type.FIR_TEXTENCODE texto = new NBioAPI.Type.FIR_TEXTENCODE();
 
-            NBioAPI.Type.HFIR hCapturedFIR = new NBioAPI.Type.HFIR();
-            NBioAPI.Type.FIR_TEXTENCODE texto = new NBioAPI.Type.FIR_TEXTENCODE();
-            // Get FIR data
-          
-               m_NBioAPI.OpenDevice(255);          
+                    m_NBioAPI.OpenDevice(255);
+                    m_NBioAPI.Capture(out hCapturedFIR);
+                    m_NBioAPI.GetTextFIRFromHandle(hCapturedFIR, out texto, true);
 
-               m_NBioAPI.Capture(out hCapturedFIR);
-               m_NBioAPI.GetTextFIRFromHandle(hCapturedFIR, out texto, true);
-
-
-            return texto.TextFIR;
-         
-             
-            
-          
+                    return texto.TextFIR;
+                }
+                catch (Exception e)
+                {
+                    m_eventLog.WriteEntry("Erro na captura: " + e.Message, EventLogEntryType.Error);
+                    return null;
+                }
+                finally
+                {
+                    try { m_NBioAPI.CloseDevice(255); } catch { }
+                }
+            }
         }
 
-       
+        public string Enroll()
+        {
+            lock (_deviceLock)
+            {
+                try
+                {
+                    NBioAPI.Type.HFIR hCapturedFIR = new NBioAPI.Type.HFIR();
+                    NBioAPI.Type.FIR_TEXTENCODE texto = new NBioAPI.Type.FIR_TEXTENCODE();
+
+                    NBioAPI.Type.FIR_PAYLOAD payload = new NBioAPI.Type.FIR_PAYLOAD();
+                    m_NBioAPI.OpenDevice(255);
+                    m_NBioAPI.Enroll(out hCapturedFIR, payload);
+                    m_NBioAPI.GetTextFIRFromHandle(hCapturedFIR, out texto, true);
+
+                    return texto.TextFIR;
+                }
+                catch (Exception e)
+                {
+                    m_eventLog.WriteEntry("Erro no enroll: " + e.Message, EventLogEntryType.Error);
+                    return null;
+                }
+                finally
+                {
+                    try { m_NBioAPI.CloseDevice(255); } catch { }
+                }
+            }
+        }
     }
 }
