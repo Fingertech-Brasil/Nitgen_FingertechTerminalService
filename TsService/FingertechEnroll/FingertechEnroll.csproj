@@ -21,9 +21,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NITGEN.SDK.NBioBSP, Version=5.4.0.0, Culture=neutral, PublicKeyToken=96eee45103d523d1, processorArchitecture=MSIL">
+    <Reference Include="NITGEN.SDK.NBioBSP, Version=5.2.0.6, Culture=neutral, PublicKeyToken=96eee45103d523d1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Installer\SdkDlls\NITGEN.SDK.NBioBSP.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
